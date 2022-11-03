@@ -1,3 +1,1 @@
 # my_neovim
-Pgtj8e80lfqcvyefLXt08OPp-gzGzoHsz
-TeaW7WEd3U81MhI8MLKSTM7x
