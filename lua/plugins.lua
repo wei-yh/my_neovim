@@ -1,48 +1,93 @@
-vim.cmd [[packadd packer.nvim]]
-return require('packer').startup(function(use)
-    use 'wbthonmason/packer.nvim'
-    use 'EdenEast/nightfox.nvim'
-    use 'neovim/nvim-lspconfig'
-    use 
-    {
-        'glepnir/lspsaga.nvim',
-        branch = "main",
-    }
-    use 'hrsh7th/cmp-nvim-lsp'
-    use 'hrsh7th/cmp-buffer'
-    use 'hrsh7th/cmp-path'
-    use 'hrsh7th/cmp-cmdline'
-    use 'hrsh7th/nvim-cmp'
-    use 'williamboman/mason.nvim'
-    use 'L3MON4D3/LuaSnip'
-    use 'saadparwaiz1/cmp_luasnip'
-    use 'rafamadriz/friendly-snippets'
-    use 
-    {
-        'nvim-lualine/lualine.nvim',
-        requires = {
-            'kyazdani42/nvim-web-devicons', opt = true
-        }
-    }
-    use 'wellle/targets.vim'
-    use 'nvim-treesitter/nvim-treesitter'
-    use {'sindrets/diffview.nvim', requires = 'nvim-lua/plenary.nvim'}
-    use {
-        'lewis6991/gitsigns.nvim',
-    }
-    use {'lukas-reineke/indent-blankline.nvim',
-        config = function()
-            require('indent_blankline').setup{
-                show_end_of_line = true,
-            }
-        end
-    }
-    use {
-      'nvim-telescope/telescope.nvim', tag = '0.1.0',
-    -- or                            , branch = '0.1.x',
-      requires = { {'nvim-lua/plenary.nvim'} }
-    }
-     use 'stevearc/aerial.nvim'
-     use 'numToStr/Comment.nvim'
-end)
+local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 
+if not vim.loop.fs_stat(lazypath) then
+  vim.fn.system {
+    "git",
+    "clone",
+    "--filter=blob:none",
+    "https://github.com/folke/lazy.nvim.git",
+    "--branch=stable", -- latest stable release
+    lazypath,
+  }
+end
+vim.opt.rtp:prepend(lazypath)
+
+-- check if firenvim is active
+local firenvim_not_active = function()
+  return not vim.g.started_by_firenvim
+end
+
+local plugin_specs = {
+  -- auto-completion engine
+  {
+    "hrsh7th/nvim-cmp",
+    -- event = 'InsertEnter',
+    event = "VeryLazy",
+    dependencies = {
+      "hrsh7th/cmp-nvim-lsp",
+      "onsails/lspkind-nvim",
+      "hrsh7th/cmp-path",
+      "hrsh7th/cmp-buffer",
+      "hrsh7th/cmp-omni",
+      "hrsh7th/cmp-emoji",
+      "quangnguyen30192/cmp-nvim-ultisnips",
+    },
+    config = function()
+--      require("config.nvim-cmp")
+    end,
+  },
+
+    "nvim-lua/plenary.nvim",
+  {
+    "nvim-telescope/telescope.nvim",
+    cmd = "Telescope",
+    dependencies = {
+      "nvim-telescope/telescope-symbols.nvim",
+    },
+  },
+
+    -- A list of colorscheme plugin you may want to try. Find what suits you.
+  { "navarasu/onedark.nvim", lazy = true },
+  { "sainnhe/edge", lazy = true },
+  { "sainnhe/sonokai", lazy = true },
+  { "sainnhe/gruvbox-material", lazy = true },
+  { "shaunsingh/nord.nvim", lazy = true },
+  { "sainnhe/everforest", lazy = true },
+  { "EdenEast/nightfox.nvim", lazy = true },
+  { "rebelot/kanagawa.nvim", lazy = true },
+  { "catppuccin/nvim", name = "catppuccin", lazy = true },
+  { "olimorris/onedarkpro.nvim", lazy = true },
+  { "tanvirtin/monokai.nvim", lazy = true },
+  { "marko-cerovac/material.nvim", lazy = true },
+
+  { "nvim-tree/nvim-web-devicons", event = "VeryLazy" },
+
+  {
+    "nvim-lualine/lualine.nvim",
+    event = "VeryLazy",
+    cond = firenvim_not_active,
+    config = function()
+     -- require("config.statusline")
+    end,
+  },
+
+  {
+    "akinsho/bufferline.nvim",
+    event = { "BufEnter" },
+    cond = firenvim_not_active,
+    config = function()
+    --  require("config.bufferline")
+    end,
+  },
+}
+
+-- configuration for lazy itself.
+local lazy_opts = {
+  ui = {
+    border = "rounded",
+    title = "Plugin Manager",
+    title_pos = "center",
+  },
+}
+
+require("lazy").setup(plugin_specs, lazy_opts)
