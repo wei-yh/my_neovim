@@ -86,6 +86,27 @@ local plugin_specs = {
             })
         end
     },
+    {
+  "roobert/search-replace.nvim",
+  config = function()
+    require("search-replace").setup({
+      -- optionally override defaults
+      default_replace_single_buffer_options = "gcI",
+      default_replace_multi_buffer_options = "egcI",
+    })
+  end,
+},
+{
+  "folke/persistence.nvim",
+  event = "BufReadPre",
+  opts = { options = vim.opt.sessionoptions:get() },
+  -- stylua: ignore
+  keys = {
+    { "<leader>qs", function() require("persistence").load() end, desc = "Restore Session" },
+    { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
+    { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
+  },
+},
 
     -- add this to your lua/plugins.lua, lua/plugins/init.lua,  or the file you keep your other plugins:
     {
