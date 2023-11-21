@@ -67,7 +67,7 @@ local plugin_specs = {
     event = "VeryLazy",
     cond = firenvim_not_active,
     config = function()
-     -- require("config.statusline")
+      require("config.statusline")
     end,
   },
 
@@ -76,9 +76,10 @@ local plugin_specs = {
     event = { "BufEnter" },
     cond = firenvim_not_active,
     config = function()
-    --  require("config.bufferline")
+      require("config.bufferline")
     end,
   },
+
 }
 
 -- configuration for lazy itself.
