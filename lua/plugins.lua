@@ -20,6 +20,7 @@ end
 local plugin_specs = {
     -- lsp zero engine
     require 'lsp-zero-config',
+    require 'colorscheme',
 
     "nvim-lua/plenary.nvim",
     {
@@ -33,20 +34,11 @@ local plugin_specs = {
         end
     },
 
-    -- A list of colorscheme plugin you may want to try. Find what suits you.
-    { "navarasu/onedark.nvim",       lazy = true },
-    { "sainnhe/edge",                lazy = true },
-    { "sainnhe/sonokai",             lazy = true },
-    { "sainnhe/gruvbox-material",    lazy = true },
-    { "shaunsingh/nord.nvim",        lazy = true },
-    { "sainnhe/everforest",          lazy = true },
-    { "EdenEast/nightfox.nvim",      lazy = true },
-    { "rebelot/kanagawa.nvim",       lazy = true },
-    { "catppuccin/nvim",             name = "catppuccin", lazy = true },
-    { "olimorris/onedarkpro.nvim",   lazy = true },
-    { "tanvirtin/monokai.nvim",      lazy = true },
-    { "marko-cerovac/material.nvim", lazy = true },
-    { 'rose-pine/neovim',            name = 'rose-pine' },
+    {
+        'nvim-focus/focus.nvim',
+        config = true,
+    },
+
 
     { "nvim-tree/nvim-web-devicons", event = "VeryLazy" },
 
@@ -87,26 +79,27 @@ local plugin_specs = {
         end
     },
     {
-  "roobert/search-replace.nvim",
-  config = function()
-    require("search-replace").setup({
-      -- optionally override defaults
-      default_replace_single_buffer_options = "gcI",
-      default_replace_multi_buffer_options = "egcI",
-    })
-  end,
-},
-{
-  "folke/persistence.nvim",
-  event = "BufReadPre",
-  opts = { options = vim.opt.sessionoptions:get() },
-  -- stylua: ignore
-  keys = {
-    { "<leader>qs", function() require("persistence").load() end, desc = "Restore Session" },
-    { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
-    { "<leader>qd", function() require("persistence").stop() end, desc = "Don't Save Current Session" },
-  },
-},
+        "roobert/search-replace.nvim",
+        config = function()
+            require("search-replace").setup({
+                -- optionally override defaults
+                default_replace_single_buffer_options = "gcI",
+                default_replace_multi_buffer_options = "egcI",
+            })
+        end,
+    },
+
+    {
+        "folke/persistence.nvim",
+        event = "BufReadPre",
+        opts = { options = vim.opt.sessionoptions:get() },
+        -- stylua: ignore
+        keys = {
+            { "<leader>qs", function() require("persistence").load() end,                desc = "Restore Session" },
+            { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
+            { "<leader>qd", function() require("persistence").stop() end,                desc = "Don't Save Current Session" },
+        },
+    },
 
     -- add this to your lua/plugins.lua, lua/plugins/init.lua,  or the file you keep your other plugins:
     {
@@ -124,6 +117,7 @@ local plugin_specs = {
             require("config.bqf")
         end,
     },
+
     {
         "folke/zen-mode.nvim",
         cmd = "ZenMode",
@@ -194,36 +188,38 @@ local plugin_specs = {
         --  download parser frome https://github.com/anasrar/nvim-treesitter-parser-bin
     },
     {
-  "nvim-treesitter/nvim-treesitter-textobjects",
-  config = function()
-    -- When in diff mode, we want to use the default
-    -- vim text objects c & C instead of the treesitter ones.
-    local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
-    local configs = require("nvim-treesitter.configs")
-    for name, fn in pairs(move) do
-      if name:find("goto") == 1 then
-        move[name] = function(q, ...)
-          if vim.wo.diff then
-            local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
-            for key, query in pairs(config or {}) do
-              if q == query and key:find("[%]%[][cC]") then
-                vim.cmd("normal! " .. key)
-                return
-              end
+        "nvim-treesitter/nvim-treesitter-textobjects",
+        config = function()
+            -- When in diff mode, we want to use the default
+            -- vim text objects c & C instead of the treesitter ones.
+            local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
+            local configs = require("nvim-treesitter.configs")
+            for name, fn in pairs(move) do
+                if name:find("goto") == 1 then
+                    move[name] = function(q, ...)
+                        if vim.wo.diff then
+                            local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
+                            for key, query in pairs(config or {}) do
+                                if q == query and key:find("[%]%[][cC]") then
+                                    vim.cmd("normal! " .. key)
+                                    return
+                                end
+                            end
+                        end
+                        return fn(q, ...)
+                    end
+                end
             end
-          end
-          return fn(q, ...)
-        end
-      end
-    end
-  end,
-},
-{
-  "nvim-treesitter/nvim-treesitter-context",
-  event = "LazyFile",
-  enabled = true,
-  opts = { mode = "cursor", max_lines = 3 },
-  --[[ keys = {
+        end,
+    },
+
+    {
+        "nvim-treesitter/nvim-treesitter-context",
+        -- event = "LazyFile",
+        enabled = true,
+        opts = { mode = "cursor", max_lines = 0
+        },
+        --[[ keys = {
     {
       "<leader>ut",
       function()
@@ -239,7 +235,15 @@ local plugin_specs = {
       desc = "Toggle Treesitter Context",
     },
   }, ]]
-},
+    },
+
+    {
+        "cshuaimin/ssr.nvim",
+        module = "ssr",
+        vim.keymap.set({ "n", "x" }, "<leader>sr", function() require("ssr").open() end)
+    },
+
+    { 'ojroques/vim-oscyank' },
 
     {
         "nvim-neorg/neorg",
@@ -248,9 +252,9 @@ local plugin_specs = {
         config = function()
             require("neorg").setup {
                 load = {
-                    ["core.defaults"] = {}, -- Loads default behaviour
+                    ["core.defaults"] = {},  -- Loads default behaviour
                     ["core.concealer"] = {}, -- Adds pretty icons to your documents
-                    ["core.dirman"] = { -- Manages Neorg workspaces
+                    ["core.dirman"] = {      -- Manages Neorg workspaces
                         config = {
                             workspaces = {
                                 notes = "~/notes",
@@ -261,6 +265,44 @@ local plugin_specs = {
             }
         end,
     },
+
+    {
+        'stevearc/conform.nvim',
+        opts = {},
+    },
+
+    {
+        -- amongst your other plugins
+        'akinsho/toggleterm.nvim',
+        version = "*",
+        config = true
+    },
+
+    {
+        "folke/persistence.nvim",
+        event = "BufReadPre",
+        opts = { options = vim.opt.sessionoptions:get() },
+        -- stylua: ignore
+        keys = {
+            { "<leader>qs", function() require("persistence").load() end,                desc = "Restore Session" },
+            { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
+            { "<leader>qd", function() require("persistence").stop() end,                desc = "Don't Save Current Session" },
+        },
+    },
+
+    {
+        "folke/which-key.nvim",
+        event = "VeryLazy",
+        init = function()
+            vim.o.timeout = true
+            vim.o.timeoutlen = 300
+        end,
+        opts = {
+            -- your configuration comes here
+            -- or leave it empty to use the default settings
+            -- refer to the configuration section below
+        }
+    }
 
 }
 
