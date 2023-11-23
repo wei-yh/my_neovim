@@ -1,5 +1,6 @@
 vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 require ('basic')
+require ('keybanding')
 require ('plugins')
-vim.cmd('colorscheme rose-pine')
+vim.cmd('colorscheme kanagawa')

@@ -5,7 +5,7 @@ if not vim.loop.fs_stat(lazypath) then
         "git",
         "clone",
         "--filter=blob:none",
-        "https://github.com/folke/lazy.nvim.git",
+        "https://mirror.ghproxy.com/https://github.com/folke/lazy.nvim.git",
         "--branch=stable", -- latest stable release
         lazypath,
     }
@@ -23,19 +23,21 @@ local plugin_specs = {
     require 'colorscheme',
 
     "nvim-lua/plenary.nvim",
-    {
-        "nvim-telescope/telescope.nvim",
-        cmd = "Telescope",
-        dependencies = {
-            "nvim-telescope/telescope-symbols.nvim",
-        },
-        config = function()
-            require("config.telescope")
-        end
-    },
-
+    require 'telescope',
     {
         'nvim-focus/focus.nvim',
+
+        keys = {
+            { "<leader>wa", "<cmd>FocusAutoresize<CR>",  desc = "FocusAutoresize" },
+            { "<leader>we", "<cmd>FocusEqualise<CR>",    desc = "FocusEqualise" },
+            { "<leader>wy", "<cmd>FocusSplitNicely<CR>", desc = "FocusSplitNicely" },
+            { "<leader>wd", "<cmd>FocusDisable<CR>",     desc = "FocusDisable" },
+            { "<leader>ws", "<cmd>FocusEnable<CR>",      desc = "FocusEnable" },
+            { "<leader>wl", "<cmd>FocusSplitLeft<CR>",   desc = "FocusSplitLeft" },
+            { "<leader>wr", "<cmd>FocusSplitRight<CR>",  desc = "FocusSplitRight" },
+            { "<leader>wu", "<cmd>FocusSplitUp<CR>",     desc = "FocusSplitUp" },
+            { "<leader>w-", "<cmd>FocusSplitDown<CR>",   desc = "FocusSplitDown" },
+        },
         config = true,
     },
 
@@ -121,6 +123,9 @@ local plugin_specs = {
     {
         "folke/zen-mode.nvim",
         cmd = "ZenMode",
+        keys = {
+            { "<leader>z", "<cmd>ZenMode<CR>", desc = "ZenMode" },
+        },
         config = function()
             require("config.zen-mode")
         end,
@@ -128,6 +133,9 @@ local plugin_specs = {
 
     {
         "nvim-pack/nvim-spectre",
+        keys = {
+            { "<leader>sp", "<cmd>Spectre<CR>", desc = "Spectre search and replace" },
+        },
         config = function()
             require("config.spectre")
         end,
@@ -174,6 +182,7 @@ local plugin_specs = {
     },
     {
         "NeogitOrg/neogit",
+        cmd = "Neogit",
         dependencies = {
             "nvim-lua/plenary.nvim",         -- required
             "nvim-telescope/telescope.nvim", -- optional
@@ -190,26 +199,7 @@ local plugin_specs = {
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
         config = function()
-            -- When in diff mode, we want to use the default
-            -- vim text objects c & C instead of the treesitter ones.
-            local move = require("nvim-treesitter.textobjects.move") ---@type table<string,fun(...)>
-            local configs = require("nvim-treesitter.configs")
-            for name, fn in pairs(move) do
-                if name:find("goto") == 1 then
-                    move[name] = function(q, ...)
-                        if vim.wo.diff then
-                            local config = configs.get_module("textobjects.move")[name] ---@type table<string,string>
-                            for key, query in pairs(config or {}) do
-                                if q == query and key:find("[%]%[][cC]") then
-                                    vim.cmd("normal! " .. key)
-                                    return
-                                end
-                            end
-                        end
-                        return fn(q, ...)
-                    end
-                end
-            end
+            require("config.nvim-treesitter-textobjects")
         end,
     },
 
@@ -217,7 +207,7 @@ local plugin_specs = {
         "nvim-treesitter/nvim-treesitter-context",
         -- event = "LazyFile",
         enabled = true,
-        opts = { mode = "cursor", max_lines = 0
+        opts = { mode = "cursor", max_lines = 3
         },
         --[[ keys = {
     {
@@ -275,7 +265,11 @@ local plugin_specs = {
         -- amongst your other plugins
         'akinsho/toggleterm.nvim',
         version = "*",
-        config = true
+        config = function()
+            require("toggleterm").setup {
+                open_mapping = [[<c-\>]],
+            }
+        end
     },
 
     {
@@ -288,6 +282,20 @@ local plugin_specs = {
             { "<leader>ql", function() require("persistence").load({ last = true }) end, desc = "Restore Last Session" },
             { "<leader>qd", function() require("persistence").stop() end,                desc = "Don't Save Current Session" },
         },
+    },
+
+    {
+        "ThePrimeagen/harpoon",
+        keys = {
+            { "<leader>ha", function() require("harpoon.mark").add_file() end,  desc = "harpoon add file" },
+           { "<leader>hm", function() require("harpoon.ui").toggle_quick_menu() end,  desc = "harpoon menu" },
+        },
+        config = true
+    },
+
+    {
+        "chentoast/marks.nvim",
+        config = true
     },
 
     {
