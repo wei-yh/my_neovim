@@ -195,6 +195,15 @@ local plugin_specs = {
     {
         'nvim-treesitter/nvim-treesitter',
         --  download parser frome https://github.com/anasrar/nvim-treesitter-parser-bin
+        config = function()
+            local configs = require("nvim-treesitter.configs")
+
+            configs.setup({
+                sync_install = false,
+                highlight = { enable = true },
+                indent = { enable = true },
+            })
+        end
     },
     {
         "nvim-treesitter/nvim-treesitter-textobjects",
@@ -287,8 +296,8 @@ local plugin_specs = {
     {
         "ThePrimeagen/harpoon",
         keys = {
-            { "<leader>ha", function() require("harpoon.mark").add_file() end,  desc = "harpoon add file" },
-           { "<leader>hm", function() require("harpoon.ui").toggle_quick_menu() end,  desc = "harpoon menu" },
+            { "<leader>ha", function() require("harpoon.mark").add_file() end,        desc = "harpoon add file" },
+            { "<leader>hm", function() require("harpoon.ui").toggle_quick_menu() end, desc = "harpoon menu" },
         },
         config = true
     },
