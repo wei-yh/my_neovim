@@ -1,0 +1,5 @@
+export NVIM_TOOLS_PATH = ~/nvimTools/
+export NVIM_TOOLS_LUALS = ~/nvimTools/luals/
+export NVIM_TOOLS_CLANGD = ~/nvimTools/clangd/
+export NVIM_TOOLS_BIN = $NVIM_TOOLS_PATH/bin:$NVIM_TOOLS_CLANGD/bin:$NVIM_TOOLS_LUALS/bin/
+exprot PATH = $NVIM_TOOLS_BIN:$PATH
