@@ -137,6 +137,7 @@ return {
       { "<leader>y=P", "<Plug>(YankyPutBeforeFilter)", desc = "Put before applying a filter" },
     },
   },
+
   {
     "NeogitOrg/neogit",
     cmd = "Neogit",
@@ -147,5 +148,39 @@ return {
       "ibhagwan/fzf-lua", -- optional
     },
     config = true,
+  },
+
+  {
+    "cljoly/telescope-repo.nvim",
+    config = function()
+      require("telescope").load_extension("repo")
+    end,
+  },
+
+  {
+    "chipsenkbeil/distant.nvim",
+    branch = "v0.3",
+    config = function()
+      require("distant"):setup()
+    end,
+  },
+
+  {
+    "kawre/leetcode.nvim",
+    build = ":TSUpdate html",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-lua/plenary.nvim", -- required by telescope
+      "MunifTanjim/nui.nvim",
+
+      -- optional
+      "nvim-treesitter/nvim-treesitter",
+      "rcarriga/nvim-notify",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = {
+      lang = "c",
+      -- configuration goes here
+    },
   },
 }
